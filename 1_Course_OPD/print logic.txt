@@ -1,0 +1,173 @@
+; на ВУ 6 выводится двузночное число
+ORG 0x110
+number:	word	3
+start:	CLA
+		LD number
+		PUSH
+		CALL print_number
+		HLT
+		
+
+ten: word 0x0
+tens: word 0x0
+units: word 0x0
+current_n: word ?
+tmp_n: word ?
+print_number:
+	LD #0
+	ST ten
+	ST tens
+	ST units
+	LD (SP + 1)
+	ST current_n
+	ST tmp_n
+	new_cycle:	CMP #9
+					BPL cycle
+					LD current_n
+					SUB ten
+					ST units
+					LD tens
+					CMP #0
+					BEQ print_units
+					LD tens
+	print_tens:	CALL print_digit
+					NOP
+	print_units:	LD units
+					CALL print_digit
+					NOP
+					RET
+					
+					cycle:	LD ten
+							ADD #10
+							ST ten
+							LD (tens)+
+							LD tmp_n
+							SUB #9
+							ST tmp_n
+							JUMP new_cycle
+; сюда приходит уже готовое число в стеке или AC, оно добавляется к началу массива,
+;вызывается скрипт печати и RET
+curr_d: 	word ?
+arr_start:	word $arr
+index:		word ?
+arr:		word $zero,$one,$two,$three,$four,$five,$six,$seven,$eight,$nine
+print_digit:	ST curr_d
+				ADD arr_start
+				ST index
+				LD (index)
+				ST index
+				CALL (index)
+				LD #0
+				OUT 0x10
+				RET
+zero:	LD #0x3E
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD  #0x51
+		OUT 0x10
+		LD #0x3E
+		OUT 0x10
+		RET
+
+one: 	LD #0x21
+		OUT 0x10
+		LD #0x7F
+		OUT 0x10
+		LD #0x01
+		OUT 0x10
+		RET
+
+two:	LD #0x21
+		OUT 0x10
+		LD #0x43
+		OUT 0x10
+		LD #0x45
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD #0x31
+		OUT 0x10
+		RET
+
+three:	LD #0x42
+		OUT 0x10
+		LD #0x41
+		OUT 0x10
+		LD #0x51
+		OUT 0x10
+		LD #0x69
+		OUT 0x10
+		LD #0x46
+		OUT 0x10
+		RET
+
+four:	LD #0x0C
+		OUT 0x10
+		LD #0x14
+		OUT 0x10
+		LD #0x24
+		OUT 0x10
+		LD #0x7F
+		OUT 0x10
+		LD #0x04
+		OUT 0x10
+		RET
+
+five:	LD #0x72
+		OUT 0x10
+		LD #0x51
+		OUT 0x10
+		LD #0x51
+		OUT 0x10
+		LD #0x51
+		OUT 0x10
+		LD #0x4E
+		OUT 0x10
+		RET
+
+six:	LD #0x1E
+		OUT 0x10
+		LD #0x29
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD #0x06
+		OUT 0x10
+		RET
+
+seven:	LD #0x40
+		OUT 0x10
+		LD #0x47
+		OUT 0x10
+		LD #0x48
+		OUT 0x10
+		LD #0x50
+		OUT 0x10
+		LD #0x60
+		OUT 0x10
+		RET
+
+eight:	LD #0x36
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD #0x36
+		OUT 0x10
+		RET
+
+nine:	LD #0x30
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD #0x49
+		OUT 0x10
+		LD #0x4A
+		OUT 0x10
+		LD #0x3C
+		OUT 0x10
+		RET
